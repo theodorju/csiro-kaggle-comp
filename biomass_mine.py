@@ -101,9 +101,9 @@ class BiomassModel(nn.Module):
     def __init__(self, num_targets=3):
         super().__init__()
         kaggle_dataset = Config.model_name.replace("_", "-").replace(".", "-")
-
         # try to load model weights as Kaggle dataset
         local_weight_path = f"/kaggle/input/{kaggle_dataset}-weights-offline/{Config.model_name}.safetensors"
+
         self.backbone = timm.create_model(
             Config.model_name, pretrained=False, num_classes=0
         )
@@ -122,11 +122,10 @@ class BiomassModel(nn.Module):
         
         # classification head
         self.classification_head = nn.Sequential(
-            nn.Linear(self.backbone.num_features, 256),
-            nn.BatchNorm1d(256),
+            nn.Linear(self.backbone.num_features, 512),
             nn.ReLU(),
             nn.Dropout(0.2),
-            nn.Linear(256, num_targets),
+            nn.Linear(512, num_targets),
         )
 
     def forward(self, img):
